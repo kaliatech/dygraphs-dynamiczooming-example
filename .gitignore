@@ -1,0 +1,12 @@
+.idea/
+*.iml
+*.iws
+*.ipr
+*.ids
+
+.metadata/
+.settings/
+.project
+.classpath
+
+mongoose*

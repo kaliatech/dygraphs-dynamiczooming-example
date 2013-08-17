@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Example 1</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap.min.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap-glyphicons.css" rel="stylesheet">
+</head>
+<style>
+  .graph-cont {
+    height: 300px;
+    width: 100%;
+  }
+
+  h4 {
+    margin-top: 1em;
+  }
+
+  footer {
+    margin-bottom: 20px;
+  }
+</style>
+<body>
+
+<a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example"><img
+    style="position: absolute; top: 0; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <h3>Using Dygraphs to dynamically load down-sampled data
+        <small> - Example 1</small>
+      </h3>
+
+      <p>In the example below, new data is loaded from a simulated server when the user zooms in on the graph.
+        This provides an overall view of the entire possible data set via the range selector below the graph, but allows
+        interactive drill down in to more detailed views of the data without having to load the entire data set at the
+        start. For very large data sets, loading all the data from the start is not practical.</p>
+
+      <p>The shaded areas above and below the solid line indicate min/max values whenever the data is being
+        down-sampled, and in this case, the solid line indicates the average value at that time. As the user zooms in,
+        eventually there are no min/max indicators because they are looking at the actual data value.</p>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <div id="graph-cont-1" class="graph-cont">
+      </div>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Files</small></h3>
+      <dl>
+        <dt><a href="">example1.html</a></dt>
+        <dd>This file. Simply contains the graph container's HTML. No javascript.</dd>
+      </dl>
+      <dl>
+        <dt><a href="">j/JGS.Demo1Page.js</a></dt>
+        <dd>Most relevant file to people interested in how this works. Contains all of the Dygraphs specific handling.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a href="">j/JGS.GraphDataProvider.js</a></dt>
+        <dd>Responsible for getting range and detail data from the server/simulator and then aggregating,splicing, and
+          converting for dygraphs.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a href="">j/JGS.ServerDataSimulator.js</a></dt>
+        <dd>Simulates a remote time series database service. Includes simulated delays.</dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <h3>How it works</h3>
+
+      <p>
+        When the page loads, <strong>two data requests are sent to the server. One for the "range" data, and one for the
+        "detail" data.</strong>. In this example, the page always initializes such that range and detail data sets are
+        exactly the same. (This could eventually be optimized out because the detail loads are redundant when
+        they reflect the same date window and down-sampling intervals as the range loads.) <strong>When zooming,
+        a new request is made for more detailed data according to the new zoom extents</strong> (or "dateWindow" in
+        Dygraphs terminology.)
+      </p>
+
+      <p>
+        When the new detail data is received, the code in <strong>GraphDataProvider.js then splices it with the existing
+        range data set to generate a single new "spliced data set"</strong>. This spliced data set is what is given to
+        Dygraphs for drawing. This allows Dygraphs to draw and support the range selector control, but draw the more
+        detailed data in the zoom window currently being viewed. The non-zoomed (aka more-downsampled) data can be seen
+        while dragging the range selector because the code <strong>does not initiate a new detail data load until
+        mouse-up</strong>.
+      </p>
+
+      <p>
+        The <strong>main caveat with this approach is related to the different ways the zoom window (dateWindow) can be
+        changed in Dygraphs</strong> and the different results with each interaction. The dateWindow can be changed
+        with:
+      </p>
+      <ul>
+        <li>A - Dragging on the range selector handles - Causes multiple zoomCallbacks while the position of the handle
+          is changing
+        </li>
+        <li>B - Dragging the range selector to move the dateWindow - No zoomCallback</li>
+        <li>C - Click-dragging on the graph to zoom - Causes a single zoomCallback</li>
+        <li>D - Click-dragging while holding Shift to pan - No zoomCallback, and not handled in this demo. Handling this
+          requires additional complexity that I'll show in a future example.
+        </li>
+      </ul>
+
+      <p>
+        <strong>To handle these interactions, the code installs a mouse-down and subsequent mouse-up listener on the
+          range selector.</strong> (It also installs corresponding touch event listeners so this works on tablets.) When a mouse
+        down occurs on the range selector, the code tracks it and ignores all subsequent zoomCallbacks. This handles
+        (A). We initiate the data load on mouse-up. This handles (A) and (B). If there was no mouse-down on the range
+        selector and we get a zoomCallback, then we assume (C), and so initiate an immediate data load. Handling (D)
+        requires hooking in to the drawCallback and is not shown in this example.
+      </p>
+
+      <p>That's basically it. <strong>The code, and comments in the code, show the details.</strong></p>
+
+      <h4>A note on third party libraries</h4>
+
+      <p>
+        I used jQuery because it simplifies the code and, honestly, I've probably started forgetting how to work with
+        DOM events correctly without it. I also used two other third party libraries that are not required, but
+        made this example a little better. Both could be easily removed (and I might do so at some point so as not
+        to confuse the dygraphs portion of all of this.) The two extra libraries:
+      </p>
+      <ul>
+        <li><a href="http://momentjs.com/">moment.js</a> - makes working with JavaScript dates so much better.</li>
+        <li><a href="http://fgnass.github.io/spin.js/">spin.js</a> - used to indicate when data is being loaded. A
+          simple "data loading..." message would also work. It's too bad <a
+              href="http://www.webmonkey.com/2013/04/its-the-end-of-the-blink-tag-as-we-know-it/">firefox removed the
+            blink tag</a>.
+        </li>
+      </ul>
+      Both libraries could be very quickly extracted from this example as they are only used in few places.
+
+
+    </div>
+  </div>
+
+
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Credits</small></h3>
+
+      <p><a href="http://dygraphs.com">Dygraphs</a> is a well designed and robust library. The <a
+          href="http://blog.dygraphs.com/2013/08/announcing-dygraphs-100.html">Dygraphs developers</a>
+        have my respect for releasing it with an MIT license and for continuing to supporting it.</p>
+
+      <p>Credit also to <a href="https://www.kcftech.com/">KCF Technologies</a> for giving me permission to
+        publish code showing the basic technique above. I flushed out the technique while doing work for
+        them on their next generation <a href="https://www.kcftech.com/smartdiagnostics/">Smart Diagnostics</a>
+        product, which uses a <em>much</em> more complicated variant of the example graph above. </p>
+    </div>
+  </div>
+
+  <footer>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        &copy; 2013 JGS Technical LLC
+      </div>
+    </div>
+  </footer>
+
+</div>
+<script src="//code.jquery.com/jquery.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/js/bootstrap.min.js"></script>
+<script src="j/lib/dygraph-1.0.combined.js"></script>
+<script src="j/lib/spin-1.3.0.min.js"></script>
+<script src="j/lib/moment-2.1.0.min.js"></script>
+
+<script src="j/JGS.ServerDataSimulator.js"></script>
+<script src="j/JGS.GraphDataProvider.js"></script>
+<script src="j/JGS.Demo1Page.js"></script>
+
+<script>
+  $(document).ready(function () {
+    var pageCfg = {
+      $graphCont: $("#graph-cont-1")
+    };
+    var demo1Page = new JGS.Demo1Page(pageCfg);
+    demo1Page.init();
+  });
+</script>
+</body>
+</html>
