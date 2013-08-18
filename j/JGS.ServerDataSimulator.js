@@ -1,5 +1,17 @@
 (function (JGS, $, undefined) {
-
+  /**
+   * This class simulates a backend time series data service.  It makes it possible to provide a live demo without
+   * having any backend service dependencies.  The server-side downsampling can be done an infinite number of ways
+   * and will depend on nature of project, data purpose, size, etc.  Relational databases can be used, but often not
+   * ideal.  For those looking for time series specific databases,  I would recommend checking out OpenTSDB, KairoDB,
+   * or my newest favorite, tempo-db.com.
+   *
+   * This class simulates a randomized loading delay, default from 100 - 1000ms.
+   *
+   *
+   @class ServerDataSimulator
+   @constructor
+   */
   JGS.ServerDataSimulator = function (seriesName, minDelay, maxDelay) {
     this.seriesName = seriesName;
     this.minDelay = minDelay === undefined ? 100 : minDelay;
@@ -9,18 +21,20 @@
   };
 
   JGS.ServerDataSimulator.prototype.loadData = function (dataLoadReq) {
-    console.log("loadData", dataLoadReq);
+    //console.log("loadData", dataLoadReq);
+
+    //Generate fake raw data set on first call
     if (!this.serverData) {
       this._generateServerData();
     }
 
-    //Simulate Downsampling
+    //Do down sampling per the dataLoadReq
     var dataPoints = [];
 
     var timePerInterval = (dataLoadReq.endDateTm.getTime() - dataLoadReq.startDateTm.getTime()) / dataLoadReq.numIntervals;
     var currTime = dataLoadReq.startDateTm.getTime();
 
-    //Find start
+    //Find start of load request in the raw dataset
     var currIdx = 0;
     for (var i = 0; i < this.serverData.length; i++) {
 
@@ -30,6 +44,7 @@
         break;
     }
 
+    // Calculate average/min/max while downsampling
     while (currIdx < this.serverData.length && currTime < dataLoadReq.endDateTm.getTime()) {
       var numPoints = 0;
       var sum = 0;
@@ -79,9 +94,12 @@
     }
 
     var delay = (Math.random() * (this.maxDelay - this.minDelay)) + this.minDelay;
+
+    //Random delay for "_onDataLoad" callback to simulate loading data from real server
     setTimeout($.proxy(this._onDataLoad, this, dataLoadReq, dataPoints), delay);
 
   };
+
 
   JGS.ServerDataSimulator.prototype._onDataLoad = function (dataLoadReq, dataPoints) {
     var dataLoadResp = {
@@ -90,6 +108,15 @@
     this.onServerDataLoadCallbacks.fire(dataLoadReq, dataLoadResp);
   };
 
+
+  /**
+   Generates the simulated raw dataset. To make the demo compelling, we want obvious larger trends in the data over time, with
+   more detail viewable only when zooming in. That's basically what this does. Date ranges and randomizing is hardcoded, but
+   could be easily parameterized.
+
+   @method _generateServerData
+   @private
+   */
   JGS.ServerDataSimulator.prototype._generateServerData = function () {
 
     var startMom = moment('2010-06-01');
@@ -111,8 +138,9 @@
 
     var period = majorInterval.valueOf();
     var periodNum = currTime / period;
-    var periodIncr = startMom.date() / 31.0; //1-31, just need a number that can change as we iterate, but stays the same for each reload of data set given same start/end dates. This makes the overall trend look the same every time
-    //and should avoid some confusion in the demo.
+    var periodIncr = startMom.date() / 31.0; // 1-31, just need a number that can change as we iterate, but stays
+                                             // the same for each reload of data set given same start/end dates. This makes the overall trend look the same every time
+                                             // and might avoid some confusion in the demo.
 
     var detailFactor = 500;
 
@@ -120,13 +148,8 @@
 
 
     for (var i = 0; i < numPoints; i++) {
-
-
-      //console.log(currTime);
       if (Math.floor(currTime / period) != periodNum) {
-        //console.log("break:" + currTime);
         periodNum = Math.floor(currTime / period);
-        //periodIncr = Math.random() * 1;
         periodIncr = moment(currTime).date() / 31.0;
         periodIncr = periodIncr - 0.5;
       }
@@ -145,7 +168,6 @@
 //      if (detailY < min)
 //        detailY = min;
 
-      //data.push({x:currTime, y:min + ((Math.sin(i*10000)) * (max-min) + (max-min)/2)});
       data.push({ x: currTime, y: detailY});
       currTime += minorInterval.valueOf();
     }

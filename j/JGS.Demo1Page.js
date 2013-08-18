@@ -93,36 +93,51 @@
 
   };
 
-
+  /**
+   * Initiates detail data load request using last known zoom extents
+   *
+   * @method _loadNewDetailData
+   * @private
+   */
   JGS.Demo1Page.prototype._loadNewDetailData = function () {
     this.showSpinner(true);
     this.graphDataProvider.loadData("Series-A", null, null, this.detailStartDateTm, this.detailEndDateTm, this.$graphCont.width());
   };
 
+  /**
+   * Callback handler when new graph data is available to be drawn
+   *
+   * @param graphData
+   * @method _onNewGraphData
+   * @private
+   */
   JGS.Demo1Page.prototype._onNewGraphData = function (graphData) {
-    console.log("onNewGraphData", graphData);
-
     this.drawDygraph(graphData);
     this.showSpinner(false);
 
   };
 
+  /**
+   * Main method for creating or updating dygraph control
+   *
+   * @param graphData
+   * @method drawDygraph
+   */
   JGS.Demo1Page.prototype.drawDygraph = function (graphData) {
-
-    console.log("drawDygraph");
-
     var dyData = graphData.dyData;
     var detailStartDateTm = graphData.detailStartDateTm;
     var detailEndDateTm = graphData.detailEndDateTm;
 
-    var recreateDygraph = false; // will be need later when supporting show/hide multiple series
+    // This will be needed later when supporting dynamic show/hide of multiple series
+    var recreateDygraph = false;
 
-
+    // To keep example1 simple, we just hard code the labels with one series
     var labels = ["time", "Series-A"];
 
-    var useAutoRange = false; // normally configurable, but for demo easier to see with fixed range and we hardcode
-    var expectMinMax = true;
+    var useAutoRange = false; // normally configurable, but for demo easier to see with fixed range and so we hardcode
+    var expectMinMax = true; // normally configurable, but for demo easier to hardcode that min/max always available
 
+    //Create the axes for dygraphs
     var axes = {};
     if (useAutoRange) {
       axes.y = {valueRange: null};
@@ -130,6 +145,7 @@
       axes.y = {valueRange: [0, 1500]};
     }
 
+    //Create new graph instance
     if (!this.graph || recreateDygraph) {
 
       var graphCfg = {
@@ -150,6 +166,7 @@
       this._setupRangeMouseHandling();
 
     }
+    //Update existing graph instance
     else {
       var graphCfg = {
         axes: axes,
@@ -162,8 +179,14 @@
 
   };
 
+  /**
+   * Dygraphs zoom callback handler
+   *
+   * @method _onDyZoomCallback
+   * @private
+   */
   JGS.Demo1Page.prototype._onDyZoomCallback = function (minDate, maxDate, yRanges) {
-    console.log("_onDyZoomCallback");
+    //console.log("_onDyZoomCallback");
 
     if (this.graph == null)
       return;
@@ -181,8 +204,8 @@
 
     //Check if need to do IE8 workaround
     if ($.support.cssFloat == false) { //IE<=8
-      // ie8 calls drawcallback with new dates before zoom. This example currently does not implement the
-      // drawCallback, so zooming likely does not work in IE8 currently. This next line might work, but will
+      // ie8 calls drawCallback with new dates before zoom. This example currently does not implement the
+      // drawCallback, so this example might not work in IE8 currently. This next line _might_ solve, but will
       // result in duplicate loading when drawCallback is added back in.
       this._loadNewDetailData();
       return;
@@ -197,6 +220,12 @@
 
   };
 
+  /**
+   * Helper method for showing/hiding spin indicator. Uses spin.js, but this method could just as easily
+   * use a simple "data is loading..." div.
+   *
+   * @method showSpinner
+   */
   JGS.Demo1Page.prototype.showSpinner = function (show) {
     if (show === true) {
       if (this.spinner == null) {
