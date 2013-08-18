@@ -35,7 +35,7 @@
         <small> - Example 1</small>
       </h3>
 
-      <p>In the example below, new data is loaded from a simulated server when the user zooms in on the graph.
+      <p>In the example below, new data is loaded from a server (simulated) when the user zooms in on the graph.
         This provides an overall view of the entire possible data set via the range selector below the graph, but allows
         interactive drill down in to more detailed views of the data without having to load the entire data set at the
         start. For very large data sets, loading all the data from the start is not practical.</p>
@@ -65,22 +65,28 @@
     <div class="col-md-12">
       <h3>Files</small></h3>
       <dl>
-        <dt><a href="">example1.html</a></dt>
-        <dd>This file. Simply contains the graph container's HTML. No javascript.</dd>
+        <dt><a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/example1.html">example1.html</a>
+        </dt>
+        <dd>This file. Simply contains the graph container's HTML and this documentation. No javascript.</dd>
       </dl>
       <dl>
-        <dt><a href="">j/JGS.Demo1Page.js</a></dt>
+        <dt><a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.Demo1Page.js">j/JGS.Demo1Page.js</a>
+        </dt>
         <dd>Most relevant file to people interested in how this works. Contains all of the Dygraphs specific handling.
         </dd>
       </dl>
       <dl>
-        <dt><a href="">j/JGS.GraphDataProvider.js</a></dt>
+        <dt><a
+            href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.GraphDataProvider.js">j/JGS.GraphDataProvider.js</a>
+        </dt>
         <dd>Responsible for getting range and detail data from the server/simulator and then aggregating,splicing, and
           converting for dygraphs.
         </dd>
       </dl>
       <dl>
-        <dt><a href="">j/JGS.ServerDataSimulator.js</a></dt>
+        <dt><a
+            href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.ServerDataSimulator.js">j/JGS.ServerDataSimulator.js</a>
+        </dt>
         <dd>Simulates a remote time series database service. Includes simulated delays.</dd>
       </dl>
     </div>
@@ -93,17 +99,20 @@
 
       <p>
         When the page loads, <strong>two data requests are sent to the server. One for the "range" data, and one for the
-        "detail" data.</strong>. In this example, the page always initializes such that range and detail data sets are
-        exactly the same. (This could eventually be optimized out because the detail loads are redundant when
-        they reflect the same date window and down-sampling intervals as the range loads.) <strong>When zooming,
-        a new request is made for more detailed data according to the new zoom extents</strong> (or "dateWindow" in
-        Dygraphs terminology.)
+        "detail" data.</strong>. <strong>When zooming, a new request is made for more detailed data according to the new
+        zoom extents</strong> (or "dateWindow" in Dygraphs terminology.)
       </p>
 
       <p>
         When the new detail data is received, the code in <strong>GraphDataProvider.js then splices it with the existing
         range data set to generate a single new "spliced data set"</strong>. This spliced data set is what is given to
-        Dygraphs for drawing. This allows Dygraphs to draw and support the range selector control, but draw the more
+        Dygraphs for drawing.</p>
+
+      <div>
+        <image src="i/datalayout.png" width="576" height="130" />
+      </div>
+
+      <p>This allows Dygraphs to draw and support the range selector control, but draw the more
         detailed data in the zoom window currently being viewed. The non-zoomed (aka more-downsampled) data can be seen
         while dragging the range selector because the code <strong>does not initiate a new detail data load until
         mouse-up</strong>.
@@ -127,7 +136,8 @@
 
       <p>
         <strong>To handle these interactions, the code installs a mouse-down and subsequent mouse-up listener on the
-          range selector.</strong> (It also installs corresponding touch event listeners so this works on tablets.) When a mouse
+          range selector.</strong> (It also installs corresponding touch event listeners so this works on tablets.) When
+        a mouse
         down occurs on the range selector, the code tracks it and ignores all subsequent zoomCallbacks. This handles
         (A). We initiate the data load on mouse-up. This handles (A) and (B). If there was no mouse-down on the range
         selector and we get a zoomCallback, then we assume (C), and so initiate an immediate data load. Handling (D)
