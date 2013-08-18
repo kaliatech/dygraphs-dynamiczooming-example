@@ -119,7 +119,7 @@
    */
   JGS.ServerDataSimulator.prototype._generateServerData = function () {
 
-    var startMom = moment('2010-06-01');
+    var startMom = moment('2012-01-01');
     var endMom = moment();
     endMom.add('day', -5);
 
