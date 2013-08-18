@@ -159,7 +159,8 @@
         dateWindow: [detailStartDateTm.getTime(), detailEndDateTm.getTime()],
         //drawCallback: $.proxy(this._onDyDrawCallback, this),
         zoomCallback: $.proxy(this._onDyZoomCallback, this),
-        digitsAfterDecimal: 2
+        digitsAfterDecimal: 2,
+        labelsDivWidth: "275"
       };
       this.graph = new Dygraph(this.$graphCont.get(0), dyData, graphCfg);
 
