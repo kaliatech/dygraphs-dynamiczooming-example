@@ -178,14 +178,8 @@
       var detailStartX = detailDps[0].x;
       var detailEndX = detailDps[detailDps.length - 1].x;
 
-      var lastRangeIdx = -1;
-      for (var i = 0; i < rangeDps.length; i++) {
-        if (rangeDps[i].x >= detailStartX) {
-          break;
-        } else {
-          lastRangeIdx++;
-        }
-      }
+      // Find last data point index in range where-after detail data will be inserted
+      var lastRangeIdx = this._findLastRangeIdxBeforeDetailStart(rangeDps, detailStartX);
 
       //Insert 1st part of range
       if (lastRangeIdx >= 0) {
@@ -212,7 +206,59 @@
     }
 
     return splicedDps;
-  }
+  };
+
+  /**
+   Finds last index in the range data set before the first detail data value.  Uses binary search per suggestion
+   by Benoit Person (https://github.com/ddr2) in Dygraphs mailing list.
+
+   @method _findLastRangeIdxBeforeDetailStart
+   @private
+   */
+  JGS.GraphDataProvider.prototype._findLastRangeIdxBeforeDetailStart = function (rangeDps, firstDetailTime) {
+
+    var minIndex = 0;
+    var maxIndex = rangeDps.length - 1;
+    var currentIndex;
+    var currentElement;
+
+    // Handle out of range cases
+    if (rangeDps.length == 0 || firstDetailTime <= rangeDps[0].x)
+      return -1;
+    else if (rangeDps[rangeDps.length-1].x < firstDetailTime)
+      return rangeDps.length-1;
+
+    // Use binary search to find index of data point in range data that occurs immediately before firstDetailTime
+    while (minIndex <= maxIndex) {
+      currentIndex = Math.floor((minIndex + maxIndex) / 2);
+      currentElement = rangeDps[currentIndex];
+
+      if (currentElement.x < firstDetailTime) {
+        minIndex = currentIndex + 1;
+
+        //we want previous point, and will not often have an exact match due to different sampling intervals
+        if (rangeDps[minIndex].x > firstDetailTime) {
+          return currentIndex;
+        }
+      }
+      else if (currentElement.x > firstDetailTime) {
+        maxIndex = currentIndex - 1;
+
+        //we want previous point, and will not often have an exact match due to different sampling intervals
+        if (rangeDps[maxIndex].x < firstDetailTime) {
+          return currentIndex-1;
+        }
+
+      }
+      else {
+        return currentIndex-1; //if exact match, we use previous range data point
+      }
+
+    }
+
+    return -1;
+
+  };
 
 
 }(window.JGS = window.JGS || {}, jQuery));
