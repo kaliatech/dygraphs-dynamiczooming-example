@@ -1,4 +1,5 @@
 (function (JGS, $, undefined) {
+  "use strict";
 
   /**
    This class provides javascript handling specific  to the example1 page. Most importantly, it provides the dygraphs

@@ -1,4 +1,5 @@
 (function (JGS, $, undefined) {
+  "use strict";
   /**
    * This class simulates a backend time series data service.  It makes it possible to provide a live demo without
    * having any backend service dependencies.  The server-side downsampling can be done an infinite number of ways

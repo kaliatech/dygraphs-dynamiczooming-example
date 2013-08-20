@@ -1,5 +1,5 @@
 (function (JGS, $, undefined) {
-
+  "use strict";
   /**
    This class is used to acquire, aggregate, splice, and convert data to be fed to dygraphs.  The handling
    of data will be different for each project and is heavily dependent on the downsampling methods, backend service API,
