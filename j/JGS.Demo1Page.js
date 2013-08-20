@@ -29,13 +29,13 @@
     var rangeEndMom = moment().utc();
     rangeEndMom.startOf('hour');
     rangeEndMom.add('hour', 1);
-    var rangeStartMom = moment.utc(rangeEndMom).add('year', -2);
+    var rangeStartMom = moment.utc(rangeEndMom).add('month', -6);
 
     // Default detail dates
     var detailEndMom = moment(rangeEndMom);
-    detailEndMom.add('day', -90);
+    detailEndMom.add('day', -30);
     var detailStartMom = moment(detailEndMom);
-    detailStartMom.add('day', -180);
+    detailStartMom.add('day', -120);
 
     this.graphDataProvider.loadData("Series-A", rangeStartMom.toDate(), rangeEndMom.toDate(), detailStartMom.toDate(), detailEndMom.toDate(), this.$graphCont.width());
 
@@ -143,7 +143,7 @@
     if (useAutoRange) {
       axes.y = {valueRange: null};
     } else {
-      axes.y = {valueRange: [0, 1500]};
+      axes.y = {valueRange: [0, 2100]};
     }
 
     //Create new graph instance

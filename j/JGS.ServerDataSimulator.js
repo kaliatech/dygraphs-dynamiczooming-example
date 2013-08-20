@@ -115,19 +115,22 @@
    more detail viewable only when zooming in. That's basically what this does. Date ranges and randomizing is hardcoded, but
    could be easily parameterized.
 
+   NOTE:[2013-08-19 JGS]  This method is a bit of a mess. I just wanted something that generated semi-compelling
+   data consistently and played around with a multitude of variations. Will eventually clean it up.
+
    @method _generateServerData
    @private
    */
   JGS.ServerDataSimulator.prototype._generateServerData = function () {
 
-    var startMom = moment('2012-01-01');
+    var startMom = moment('2012-01-01').utc();
     var endMom = moment();
-    endMom.add('day', -5);
+    //endMom.add('day', -5);
 
-    var min = 0;
-    var max = 1000;
-    var majorInterval = moment.duration(37, 'days');
-    var minorInterval = moment.duration(1, 'hour');
+    var min = 500;
+    var max = 1500;
+    var majorInterval = moment.duration(11, 'days');
+    var minorInterval = moment.duration(1, 'minute');
 
     var data = [];
 
@@ -143,7 +146,7 @@
                                              // the same for each reload of data set given same start/end dates. This makes the overall trend look the same every time
                                              // and might avoid some confusion in the demo.
 
-    var detailFactor = 500;
+    var detailFactor = 50 + (Math.random() * 450);
 
     var lastY = min;
 
@@ -152,8 +155,21 @@
       if (Math.floor(currTime / period) != periodNum) {
         periodNum = Math.floor(currTime / period);
         periodIncr = moment(currTime).date() / 31.0;
-        periodIncr = periodIncr - 0.5;
+        periodIncr = periodIncr * ((0.09) - (0.09/2));
       }
+      else {
+
+        if (lastY > (max+min) / 2)
+          periodIncr = periodIncr - (lastY / (max+min)) * .000002;
+        else
+          periodIncr = periodIncr + ((max+min-lastY)/ (max+min)) * .000002;
+      }
+
+      if (Math.floor(currTime / (period / 4) != periodNum)) {
+        detailFactor = 50 + (Math.random() * 450);
+      }
+
+
 
       lastY += periodIncr;
       if (lastY > max) {
@@ -163,7 +179,9 @@
         periodIncr = periodIncr * -1;
       }
 
-      var detailY = lastY + Math.random() * detailFactor;
+
+
+      var detailY = lastY + (Math.random() - 0.5) * detailFactor;
 //      if (detailY > max)
 //        detailY = max;
 //      if (detailY < min)
