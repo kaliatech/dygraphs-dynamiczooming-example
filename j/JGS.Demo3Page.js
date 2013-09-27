@@ -157,17 +157,30 @@
    * and relies on Dygraphs' internals. Without this, pan interactions (holding SHIFT and dragging graph) do not result
    * in detail data being loaded.
    *
+   * This method works by replacing the global Dygraph.Interaction.endPan method.  The replacement method
+   * is global to all instances of this class, and so it can not rely on "self" scope.  To support muliple graphs
+   * with their own pan interactions, we keep a circular reference to this object instance on the dygraphs instance
+   * itself when creating it. This allows us to look up the correct page object instance when the endPan callback is
+   * triggered. We use a global JGS.Demo3Page.isGlobalPanInteractionHandlerInstalled flag to make sure we only install
+   * the global handler once.
+   *
    * @method _setupPanInteractionHandling
    * @private
    */
   JGS.Demo3Page.prototype._setupPanInteractionHandling = function () {
-    var self = this;
+
+    if (JGS.Demo3Page.isGlobalPanInteractionHandlerInstalled)
+      return;
+    else
+      JGS.Demo3Page.isGlobalPanInteractionHandlerInstalled = true;
 
     //Save original endPan function
     var origEndPan = Dygraph.Interaction.endPan;
 
     //Replace built-in handling with our own function
     Dygraph.Interaction.endPan = function(event, g, context) {
+
+      var myInstance = g.demoPageInstance;
 
       //Call the original to let it do it's magic
       origEndPan(event,g,context);
@@ -177,11 +190,11 @@
       //Note that this _might_ not work as is in IE8. If not, might require a setTimeout hack that executes these
       //next few lines after a few ms delay. Have not tested with IE8 yet.
       var axisX = g.xAxisRange();
-      self.detailStartDateTm = new Date(axisX[0]);
-      self.detailEndDateTm = new Date(axisX[1]);
+      myInstance.detailStartDateTm = new Date(axisX[0]);
+      myInstance.detailEndDateTm = new Date(axisX[1]);
 
       //Trigger new detail load
-      self._loadNewDetailData();
+      myInstance._loadNewDetailData();
     };
     Dygraph.endPan = Dygraph.Interaction.endPan; //see dygraph-interaction-model.js
   };
@@ -264,6 +277,9 @@
 
       this._setupRangeMouseHandling();
       this._setupPanInteractionHandling();
+
+      //Store this object instance on the graph itself so we can later reference it for endPan callback handling
+      this.graph.demoPageInstance = this;
 
     }
     //Update existing graph instance
