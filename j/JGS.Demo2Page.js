@@ -36,8 +36,6 @@
 
     this.$rangeBtnsCont.find("button[name='range-btn-6m']").addClass('active');
 
-    console.log("here", this.$rangeBtnsCont.find("button[name='range-btn-1y']"));
-
     // Default detail dates
     var detailEndMom = moment(rangeEndMom);
     detailEndMom.add('day', -30);
@@ -64,7 +62,7 @@
       rangeEndMom.minutes(0).seconds(0);
       rangeEndMom.add('hour', 1);
 
-      console.log("rangeType", rangeType);
+      //console.log("rangeType", rangeType);
 
       var rangeStartMom;
       if (rangeType == "1d") {
