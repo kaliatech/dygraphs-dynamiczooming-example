@@ -6,3 +6,6 @@ Demonstrates how to dynamically load down-sampled data, while zooming and pannin
  * http://kaliatech.github.io/dygraphs-dynamiczooming-example/example1.html
  * http://kaliatech.github.io/dygraphs-dynamiczooming-example/example2.html
  * http://kaliatech.github.io/dygraphs-dynamiczooming-example/example3.html
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/kaliatech/dygraphs-dynamiczooming-example/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
+
