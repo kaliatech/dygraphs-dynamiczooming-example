@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Example 5</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+</head>
+<style>
+  .graph-cont {
+    height: 300px;
+    width: 100%;
+  }
+
+  h4 {
+    margin-top: 1em;
+  }
+
+  footer {
+    margin-bottom: 20px;
+  }
+
+  .content img {
+    margin: 2em 0;
+  }
+
+  .range-btns-cont  {
+    display: block;
+    float:right;
+    visibility: hidden;
+    margin: 6px 6px;
+  }
+</style>
+<body>
+
+<a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example"><img
+    style="position: absolute; top: 0; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <h3>Using Dygraphs to load down-sampled data while zooming
+        <small> - Example 5</small>
+      </h3>
+
+      <p>This examples shares majority of javascript and setup as <a href="../">previous examples</a>, but shows a 2nd
+         y-axis and adds support for plotting multiple independent series.</p>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <div id="graph-cont-1" class="graph-cont">
+      </div>
+      <div>
+
+        <span id="range-btns-cont-1" class="btn-group range-btns-cont">
+            <button name="range-btn-5y" class="btn btn-default btn-mini">
+              5y
+            </button>
+            <button name="range-btn-1y" class="btn btn-default btn-mini">
+              1y
+            </button>
+            <button name="range-btn-ytd" class="btn btn-default  btn-mini">
+              YTD
+            </button>
+            <button name="range-btn-6m" class="btn btn-default btn-mini">
+              6m
+            </button>
+            <button name="range-btn-1m" class="btn btn-default  btn-mini">
+              1m
+            </button>
+            <button name="range-btn-1w" class="btn btn-default  btn-mini">
+              1w
+            </button>
+            <button name="range-btn-1d" class="btn btn-default btn-mini">
+              1d
+            </button>
+
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Files</small></h3>
+      <dl>
+        <dt><a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/example5.html">example5.html</a>
+        </dt>
+        <dd>This page. Contains the graph container's HTML, range selector buttons, and this documentation. No
+          javascript.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.Demo5Page.js">j/JGS.Demo5Page.js</a>
+        </dt>
+        <dd>This is the most relevant file. Contains all of the Dygraphs specific handling. The majority of dygraphs code is the
+            same as previous examples, however, additional setup and formatting has been added to load multiple series and show
+            a 2nd y-axis.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a
+            href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.GraphDataProviderMultiSeries.js">j/JGS.GraphDataProviderMultiSeries.js</a>
+        </dt>
+        <dd>This is a new class created for this example. It is a more generic version of the same class used in
+          previous examples for getting range and detail data from the server/simulator and aggregating,splicing,
+          and converting it for dygraphs. What this class adds is support for combining multiple series in to a
+          single dataset useable by dygraphs even when the time axis does not align between the series. For details,
+          see comments and code around the
+          <a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.GraphDataProviderMultiSeries.js">JGS.Demo5Page._combineSeries</a>
+          method.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a
+            href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.ServerDataSimulator.js">j/JGS.ServerDataSimulator.js</a>
+        </dt>
+        <dd>Simulates a remote time series data service. Includes simulated delays. This file is shared with all the other  It was modified
+            slightly while building this example so that multiple series have different trending and value ranges.
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <footer>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        &copy; 2014 JGS Technical LLC
+      </div>
+    </div>
+  </footer>
+
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="j/lib/dygraph-1.0.combined.js"></script>
+<script src="j/lib/spin-1.3.0.min.js"></script>
+<script src="j/lib/moment-2.1.0.min.js"></script>
+
+<script src="j/JGS.ServerDataSimulator.js"></script>
+<script src="j/JGS.GraphDataProviderMultiSeries.js"></script>
+<script src="j/JGS.Demo5Page.js"></script>
+
+<script>
+  $(document).ready(function () {
+    var pageCfg = {
+      $graphCont: $("#graph-cont-1"),
+      $rangeBtnsCont: $("#range-btns-cont-1")
+    };
+    var demo5Page = new JGS.Demo5Page(pageCfg);
+    demo5Page.init();
+  });
+</script>
+
+<script type="text/javascript">
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+  try {
+    var pageTracker = _gat._getTracker("UA-8344371-7");
+    pageTracker._trackPageview();
+  } catch (err) {
+  }
+</script>
+
+</body>
+</html>

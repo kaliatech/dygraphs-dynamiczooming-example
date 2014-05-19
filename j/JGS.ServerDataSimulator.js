@@ -62,8 +62,6 @@
 
       var avg = sum / numPoints
 
-      var dps = [];
-
       if (numPoints == 0) {
         if (dataLoadReq.includeMinMax) {
           dataPoints.push({
@@ -81,9 +79,9 @@
         if (dataLoadReq.includeMinMax) {
           dataPoints.push({
             x: currTime,
-            avg: avg,
-            min: min,
-            max: max
+            avg: Math.round(avg),
+            min: Math.round(min),
+            max: Math.round(max)
           });
         }
         else {
@@ -92,9 +90,12 @@
       }
 
       currTime += timePerInterval;
+      currTime = Math.round(currTime);
     }
 
     var delay = (Math.random() * (this.maxDelay - this.minDelay)) + this.minDelay;
+
+    //console.log("dataPoints", dataLoadReq, dataPoints);
 
     //Random delay for "_onDataLoad" callback to simulate loading data from real server
     setTimeout($.proxy(this._onDataLoad, this, dataLoadReq, dataPoints), delay);
@@ -116,7 +117,7 @@
    could be easily parameterized.
 
    NOTE:[2013-08-19 JGS]  This method is a bit of a mess. I just wanted something that generated semi-compelling
-   data consistently and played around with a multitude of variations. Will eventually clean it up.
+   data consistently and played around with a multitude of variations.
 
    @method _generateServerData
    @private
@@ -124,13 +125,26 @@
   JGS.ServerDataSimulator.prototype._generateServerData = function () {
 
     var startMom = moment('2012-01-01').utc();
-    var endMom = moment();
+    var endMom = moment('2015-01-01').utc();
     //endMom.add('day', -5);
 
     var min = 500;
     var max = 1500;
     var majorInterval = moment.duration(11, 'days');
     var minorInterval = moment.duration(1, 'minute');
+
+    if (this.seriesName == "Series-A") {
+      majorInterval = moment.duration(11, 'days');
+      minorInterval = moment.duration(1, 'minute');
+    }
+    else if (this.seriesName == "Series-B") {
+      majorInterval = moment.duration(5, 'days');
+      minorInterval = moment.duration(5, 'minute');
+    }
+    else {
+      majorInterval = moment.duration(20, 'days');
+      minorInterval = moment.duration(10, 'minute');
+    }
 
     var data = [];
 
@@ -142,11 +156,25 @@
 
     var period = majorInterval.valueOf();
     var periodNum = currTime / period;
-    var periodIncr = startMom.date() / 31.0; // 1-31, just need a number that can change as we iterate, but stays
-                                             // the same for each reload of data set given same start/end dates. This makes the overall trend look the same every time
-                                             // and might avoid some confusion in the demo.
 
-    var detailFactor = 50 + (Math.random() * 450);
+    // just need a number that can change as we iterate, but stays
+    // the same for each reload of data set given same start/end dates. This makes the overall trend look the same every time
+    // for a given series, and might avoid some confusion in the demo.
+    var periodIncr;
+    var detailFactor;
+
+    if (this.seriesName == "Series-A") {
+      periodIncr = startMom.date() / 31.0; //1-31
+      detailFactor = 50 + (Math.random() * 450);
+    }
+    else if (this.seriesName == "Series-B") {
+      periodIncr = ((endMom.date() - 5) / 31.0) * 2; //1-31
+      detailFactor = 150 + (Math.random() * 650);
+    }
+    else {
+      periodIncr = Math.random();
+      detailFactor = 20 + (Math.random() * 250);
+    }
 
     var lastY = min;
 
@@ -155,20 +183,19 @@
       if (Math.floor(currTime / period) != periodNum) {
         periodNum = Math.floor(currTime / period);
         periodIncr = moment(currTime).date() / 31.0;
-        periodIncr = periodIncr * ((0.09) - (0.09/2));
+        periodIncr = periodIncr * ((0.09) - (0.09 / 2));
       }
       else {
 
-        if (lastY > (max+min) / 2)
-          periodIncr = periodIncr - (lastY / (max+min)) * .000002;
+        if (lastY > (max + min) / 2)
+          periodIncr = periodIncr - (lastY / (max + min)) * .000002;
         else
-          periodIncr = periodIncr + ((max+min-lastY)/ (max+min)) * .000002;
+          periodIncr = periodIncr + ((max + min - lastY) / (max + min)) * .000002;
       }
 
       if (Math.floor(currTime / (period / 4) != periodNum)) {
         detailFactor = 50 + (Math.random() * 450);
       }
-
 
 
       lastY += periodIncr;
@@ -178,7 +205,6 @@
       else if (lastY < min) {
         periodIncr = periodIncr * -1;
       }
-
 
 
       var detailY = lastY + (Math.random() - 0.5) * detailFactor;
