@@ -125,10 +125,10 @@
   JGS.ServerDataSimulator.prototype._generateServerData = function () {
 
     var startMom = moment().utc();
-	startMom.add('year',-3);
+	  startMom.add(-3, 'year');
 	
     var endMom = moment().utc();
-    endMom.add('day', 30);
+    endMom.add(30, 'day');
 
     var min = 500;
     var max = 1500;

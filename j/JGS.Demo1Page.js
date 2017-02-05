@@ -28,14 +28,14 @@
     // Default range dates
     var rangeEndMom = moment().utc();
     rangeEndMom.startOf('hour');
-    rangeEndMom.add('hour', 1);
-    var rangeStartMom = moment.utc(rangeEndMom).add('month', -6);
+    rangeEndMom.add(1, 'hour');
+    var rangeStartMom = moment.utc(rangeEndMom).add(-6, 'month');
 
     // Default detail dates
     var detailEndMom = moment(rangeEndMom);
-    detailEndMom.add('day', -30);
+    detailEndMom.add(-30, 'day');
     var detailStartMom = moment(detailEndMom);
-    detailStartMom.add('day', -120);
+    detailStartMom.add(-120, 'day');
 
     this.graphDataProvider.loadData("Series-A", rangeStartMom.toDate(), rangeEndMom.toDate(), detailStartMom.toDate(), detailEndMom.toDate(), this.$graphCont.width());
 

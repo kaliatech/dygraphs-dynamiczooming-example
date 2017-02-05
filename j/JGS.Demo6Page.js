@@ -34,18 +34,17 @@
     var rangeEndMom = moment().utc();
     this.rangeEndMom = rangeEndMom;
 
-    var rangeStartMom = moment.utc(rangeEndMom).add('minute', -15);
+    var rangeStartMom = moment.utc(rangeEndMom).add(-15, 'minute');
     this.rangeStartMom = rangeStartMom;
 
     this.$rangeBtnsCont.find("button[name='range-btn-15min']").addClass('active');
 
     // Default detail dates
     var detailEndMom = moment(rangeEndMom);
-    //detailEndMom.add('minute', -5);
     this.detailEndDateTm = detailEndMom.toDate(); //needed for the live data handler. Refactoring needed.
 
     var detailStartMom = moment(detailEndMom);
-    detailStartMom.add('minute', -5);
+    detailStartMom.add(-5, 'minute');
     this.detailStartDateTm = detailStartMom.toDate();
 
     this._setupMouseButtonTrackingForLiveData();
@@ -109,19 +108,19 @@
 
       var rangeStartMom;
       if (rangeType == "5min") {
-        rangeStartMom = moment.utc(rangeEndMom).add('minute', -5);
+        rangeStartMom = moment.utc(rangeEndMom).add(-5, 'minute');
       } else if (rangeType == "15min") {
-        rangeStartMom = moment.utc(rangeEndMom).add('minute', -15);
+        rangeStartMom = moment.utc(rangeEndMom).add(-15, 'minute');
       } else if (rangeType == "1d") {
-        rangeStartMom = moment.utc(rangeEndMom).add('week', -1);
+        rangeStartMom = moment.utc(rangeEndMom).add(-1, 'week');
       } else if (rangeType == "1m") {
-        rangeStartMom = moment.utc(rangeEndMom).add('month', -1);
+        rangeStartMom = moment.utc(rangeEndMom).add(-1, 'month');
       } else if (rangeType == "6m") {
-        rangeStartMom = moment.utc(rangeEndMom).add('month', -6);
+        rangeStartMom = moment.utc(rangeEndMom).add(-6, 'month');
       } else if (rangeType == "1y") {
-        rangeStartMom = moment.utc(rangeEndMom).add('year', -1);
+        rangeStartMom = moment.utc(rangeEndMom).add(-1, 'year');
       } else if (rangeType == "5y") {
-        rangeStartMom = moment.utc(rangeEndMom).add('year', -5);
+        rangeStartMom = moment.utc(rangeEndMom).add(-5, 'year');
       } else if (rangeType == "ytd") {
         rangeStartMom = moment().startOf('year').utc();
       }

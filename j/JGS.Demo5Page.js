@@ -31,16 +31,16 @@
     // Default range dates
     var rangeEndMom = moment().utc();
     rangeEndMom.startOf('hour');
-    rangeEndMom.add('hour', 1);
-    var rangeStartMom = moment.utc(rangeEndMom).add('month', -6);
+    rangeEndMom.add(1, 'hour');
+    var rangeStartMom = moment.utc(rangeEndMom).add(-6, 'month');
 
     this.$rangeBtnsCont.find("button[name='range-btn-6m']").addClass('active');
 
     // Default detail dates
     var detailEndMom = moment(rangeEndMom);
-    detailEndMom.add('day', -30);
+    detailEndMom.add(-30, 'day');
     var detailStartMom = moment(detailEndMom);
-    detailStartMom.add('day', -120);
+    detailStartMom.add(-120, 'day');
 
     this.seriesDataConfigs = [
       {seriesName: 'Series-A'},
@@ -64,26 +64,27 @@
       var rangeEndMom;
       rangeEndMom = moment().utc();
       rangeEndMom.minutes(0).seconds(0);
-      rangeEndMom.add('hour', 1);
+      rangeEndMom.add(1, 'hour');
 
       //console.log("rangeType", rangeType);
 
       var rangeStartMom;
       if (rangeType == "1d") {
-        rangeStartMom = moment.utc(rangeEndMom).add('day', -1);
+        rangeStartMom = moment.utc(rangeEndMom).add(-1, 'day');
       } else if (rangeType == "1w") {
-        rangeStartMom = moment.utc(rangeEndMom).add('week', -1);
+        rangeStartMom = moment.utc(rangeEndMom).add(-1, 'week');
       } else if (rangeType == "1m") {
-        rangeStartMom = moment.utc(rangeEndMom).add('month', -1);
+        rangeStartMom = moment.utc(rangeEndMom).add(-1, 'month');
       } else if (rangeType == "6m") {
-        rangeStartMom = moment.utc(rangeEndMom).add('month', -6);
+        rangeStartMom = moment.utc(rangeEndMom).add(-6, 'month');
       } else if (rangeType == "1y") {
-        rangeStartMom = moment.utc(rangeEndMom).add('year', -1);
+        rangeStartMom = moment.utc(rangeEndMom).add(-1, 'year');
       } else if (rangeType == "5y") {
-        rangeStartMom = moment.utc(rangeEndMom).add('year', -5);
+        rangeStartMom = moment.utc(rangeEndMom).add(-5, 'year');
       } else if (rangeType == "ytd") {
         rangeStartMom = moment().startOf('year').utc();
       }
+
 
       //For demo purposes, when range is reset, auto reset detail view to same extents as range
       var detailStartMom = rangeStartMom.clone();
