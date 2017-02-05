@@ -367,6 +367,9 @@
    */
   JGS.Demo3Page.prototype.showSpinner = function (show) {
     if (show === true) {
+
+      var target = this.$graphCont.get(0);
+
       if (this.spinner == null) {
         var opts = {
           lines: 13, // The number of lines to draw
@@ -381,17 +384,15 @@
           shadow: false, // Whether to render a shadow
           hwaccel: false, // Whether to use hardware acceleration
           className: 'spinner', // The CSS class to assign to the spinner
-          zIndex: 2e9, // The z-index (defaults to 2000000000)
-          top: 'auto', // Top position relative to parent in px
-          left: 'auto' // Left position relative to parent in px
+          zIndex: 2e9 // The z-index (defaults to 2000000000)
         };
-        var target = this.$graphCont.parent().get(0);
+
         this.spinner = new Spinner(opts);
         this.spinner.spin(target);
         this.spinnerIsSpinning = true;
       } else {
         if (this.spinnerIsSpinning === false) { //else already spinning
-          this.spinner.spin(this.$graphCont.get(0));
+          this.spinner.spin(target);
           this.spinnerIsSpinning = true;
         }
       }
