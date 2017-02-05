@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Example 7</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+</head>
+<style>
+  .graph-cont {
+    height: 300px;
+    width: 100%;
+  }
+
+  h4 {
+    margin-top: 1em;
+  }
+
+  footer {
+    margin-bottom: 20px;
+  }
+
+  .content img {
+    margin: 2em 0;
+  }
+
+  .range-btns-cont  {
+    display: block;
+    float:right;
+    visibility: hidden;
+    margin: 6px 6px;
+  }
+</style>
+<body>
+
+<a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example"><img
+    style="position: absolute; top: 0; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <h3>Using Dygraphs to load down-sampled data while zooming
+        <small> - Example 7</small>
+      </h3>
+
+      <p>Same as example 3, but shows use of annotations. The granularity of the annotations changes when selecting 1d range.</p>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <div id="graph-cont-1" class="graph-cont">
+      </div>
+      <div>
+
+        <span id="range-btns-cont-1" class="btn-group range-btns-cont">
+            <button name="range-btn-5y" class="btn btn-default btn-mini">
+              5y
+            </button>
+            <button name="range-btn-1y" class="btn btn-default btn-mini">
+              1y
+            </button>
+            <button name="range-btn-ytd" class="btn btn-default  btn-mini">
+              YTD
+            </button>
+            <button name="range-btn-6m" class="btn btn-default btn-mini">
+              6m
+            </button>
+            <button name="range-btn-1m" class="btn btn-default  btn-mini">
+              1m
+            </button>
+            <button name="range-btn-1w" class="btn btn-default  btn-mini">
+              1w
+            </button>
+            <button name="range-btn-1d" class="btn btn-default btn-mini">
+              1d
+            </button>
+
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Files</small></h3>
+      <dl>
+        <dt><a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/example7.html">example7.html</a>
+        </dt>
+        <dd>This page. Contains the graph container's HTML, range selector buttons, and this documentation. No
+          javascript.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.Demo7Page.js">j/JGS.Demo7Page.js</a>
+        </dt>
+        <dd>This is the most relevant file. Contains all of the Dygraphs specific handling. 99% is the same as example 3. Additional
+          code added to load and set annotations. In a non-demo system these annotations could be loaded from server and any
+          number of other ways. The appropriate granularity would be use-case specific.  The only caveat is that the annotation.x
+          value must align exactly to an existing x value in the graphed data set.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a
+            href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.GraphDataProvider.js">j/JGS.GraphDataProvider.js</a>
+        </dt>
+        <dd>Responsible for getting range and detail data from the server/simulator and then aggregating,splicing, and
+          converting it for dygraphs. This file is shared with example 1 &amp; 2 &amp; 3.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a
+            href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.ServerDataSimulator.js">j/JGS.ServerDataSimulator.js</a>
+        </dt>
+        <dd>Simulates a remote time series data service. Includes simulated delays. This file is shared with example
+          1 &amp; 2 &amp; 3.
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <a href="https://kaliatech.github.io/dygraphs-dynamiczooming-example/">
+        <span class="glyphicon glyphicon-arrow-left"></span> Back to examples list
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        &copy; 2016 JGS Technical LLC
+      </div>
+    </div>
+  </footer>
+
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="j/lib/dygraph-1.0.combined.js"></script>
+<script src="j/lib/spin-1.3.0.min.js"></script>
+<script src="j/lib/moment-2.1.0.min.js"></script>
+
+<script src="j/JGS.ServerDataSimulator.js"></script>
+<script src="j/JGS.GraphDataProvider.js"></script>
+<script src="j/JGS.Demo7Page.js"></script>
+
+<script>
+  $(document).ready(function () {
+    var pageCfg = {
+      $graphCont: $("#graph-cont-1"),
+      $rangeBtnsCont: $("#range-btns-cont-1")
+    };
+    var demo7Page = new JGS.Demo7Page(pageCfg);
+    demo7Page.init();
+  });
+</script>
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+      (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+    m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-8344371-7', 'auto');
+  ga('send', 'pageview');
+</script>
+
+</body>
+</html>

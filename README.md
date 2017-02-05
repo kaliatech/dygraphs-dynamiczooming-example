@@ -15,5 +15,6 @@ Examples demonstrating how to dynamically load down-sampled data, while zooming 
  More complex example showing multiple independent series & 2nd y-axis.
  * [Example 6](https://kaliatech.github.io/dygraphs-dynamiczooming-example/example6.html) - 
  Shows the technique is compatible with live continuous data.
-
+ * [Example 7](https://kaliatech.github.io/dygraphs-dynamiczooming-example/example7.html) - 
+ Same as example 3, but shows with annotations.
 
