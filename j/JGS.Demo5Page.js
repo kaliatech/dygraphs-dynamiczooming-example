@@ -251,11 +251,11 @@
     //Create the axes for dygraphs
     var axes = {};
     if (useAutoRange) {
-      axes.y = {valueRange: null};
-      axes.y2 = {valueRange: null};
+      axes.y = {valueRange: null, axisLabelWidth: 60};
+      axes.y2 = {valueRange: null, axisLabelWidth: 60};
     } else {
-      axes.y = {valueRange: [0, 2100], independentTicks: true};
-      axes.y2 = {valueRange: [0, 10000], independentTicks: true};
+      axes.y = {valueRange: [0, 2100], independentTicks: true, axisLabelWidth: 60};
+      axes.y2 = {valueRange: [0, 10000], independentTicks: true, axisLabelWidth: 60};
     }
 
     var series = {
@@ -277,7 +277,6 @@
         labels: labels,
         legend: 'always',
         ylabel: "Series-A / Series-C",
-        yAxisLabelWidth: 60,
         y2label: "Series-B",
         customBars: expectMinMax,
         showRangeSelector: true,
