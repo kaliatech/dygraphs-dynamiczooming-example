@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Example 6</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap-glyphicons.css" rel="stylesheet">
+</head>
+<style>
+  .graph-cont {
+    height: 300px;
+    width: 100%;
+  }
+
+  h4 {
+    margin-top: 1em;
+  }
+
+  footer {
+    margin-bottom: 20px;
+  }
+
+  .content img {
+    margin: 2em 0;
+  }
+
+  .range-btns-cont  {
+    display: block;
+    float:right;
+    visibility: hidden;
+    margin: 6px 6px;
+  }
+</style>
+<body>
+
+<a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example"><img
+    style="position: absolute; top: 0; right: 0; border: 0;"
+    src="https://s3.amazonaws.com/github/ribbons/forkme_right_green_007200.png" alt="Fork me on GitHub"></a>
+
+<div class="container">
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <h3>Using Dygraphs to load down-sampled data while zooming
+        <small> - Example 6</small>
+      </h3>
+
+      <p>This example shows that the overall technique works with live continuous data loading as well, but it
+        requires some additional handling and complexity.  The main difference when using live data and dynamic
+        zooming, is that it's necessary to prevent changing graph automatically <em>unless</em> the user
+        intends to be looking at the most recent live data continuously.  This is highly dependent on user interface
+        design and expectations.</p>
+
+      <p>In this simple example, if the user has zoomed in to detail view with the detail
+        end time less than 10 seconds from current time, then code assumes user intends to look at the most recent
+        live data continuously and so it resets the detail window end time on each data load. If the user
+        pans/zooms away from the current time, then code does not automatically reset detail view even though new
+        data is still continuing to be loaded and will be visible in the range viewer.</p>
+
+      <p>Note that the original demos were not written with live data loading in mind. Some minor refactoring would make
+         for much cleaner implementation.</p>
+
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+
+      <div id="graph-cont-1" class="graph-cont">
+      </div>
+      <div>
+
+        <span id="range-btns-cont-1" class="btn-group range-btns-cont">
+            <button name="range-btn-5y" class="btn btn-default btn-mini">
+              5y
+            </button>
+            <button name="range-btn-1y" class="btn btn-default btn-mini">
+              1y
+            </button>
+            <button name="range-btn-ytd" class="btn btn-default  btn-mini">
+              YTD
+            </button>
+            <button name="range-btn-6m" class="btn btn-default btn-mini">
+              6m
+            </button>
+            <button name="range-btn-1m" class="btn btn-default  btn-mini">
+              1m
+            </button>
+            <button name="range-btn-1d" class="btn btn-default btn-mini">
+              1d
+            </button>
+            <button name="range-btn-15min" class="btn btn-default  btn-mini">
+              15min
+            </button>
+            <button name="range-btn-5min" class="btn btn-default btn-mini">
+              5min
+            </button>
+
+        </span>
+      </div>
+      <div style="margin:1em 0">
+        <button type="button" class="btn btn-success liveupdate-btn">Enable Live Updates</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <h3>Files</small></h3>
+      <dl>
+        <dt><a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/example6.html">example6.html</a>
+        </dt>
+        <dd>This page. Contains the graph container's HTML, range selector buttons, and this documentation. No
+          javascript.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.Demo6Page.js">j/JGS.Demo6Page.js</a>
+        </dt>
+        <dd>This is the most relevant file. Contains all of the Dygraphs specific handling. 90% the same as example 3, but adds live
+            data loading and additional hooks to track mouse button to prevent redrawing with live data while user is interacting.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a
+            href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.GraphDataProviderLive.js">j/JGS.GraphDataProviderLive.js</a>
+        </dt>
+        <dd>Responsible for getting range and detail data from the server/simulator and then aggregating,splicing, and
+          converting it for dygraphs. This file is same as the GraphDataProvider used for example 1 & 2 & 3, but uses
+          GraphDataSimulatorLive.js to source data.
+        </dd>
+      </dl>
+      <dl>
+        <dt><a
+            href="https://github.com/kaliatech/dygraphs-dynamiczooming-example/blob/master/j/JGS.ServerDataSimulatorLive.js">j/JGS.ServerDataSimulatorLive.js</a>
+        </dt>
+        <dd>Simulates a remote time series data service. Includes simulated delays. This file is the same as ServerDataSimulator used in example
+          1 & 2 & 3, but also simulates loading of new live data on each data load call.  This is poorly coded and is meant only to support this demo.
+        </dd>
+      </dl>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <a href="http://kaliatech.github.io/dygraphs-dynamiczooming-example/">
+        <span class="glyphicon glyphicon-arrow-left"></span> Back to examples list
+      </a>
+    </div>
+  </div>
+
+  <footer>
+    <hr>
+    <div class="row">
+      <div class="col-md-12">
+        &copy; 2016 JGS Technical LLC
+      </div>
+    </div>
+  </footer>
+
+</div>
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+<script src="j/lib/dygraph-1.0.combined.js"></script>
+<script src="j/lib/spin-1.3.0.min.js"></script>
+<script src="j/lib/moment-2.1.0.min.js"></script>
+
+<script src="j/JGS.ServerDataSimulator.js"></script>
+<script src="j/JGS.ServerDataSimulatorLive.js"></script>
+<script src="j/JGS.GraphDataProvider.js"></script>
+<script src="j/JGS.GraphDataProviderLive.js"></script>
+<script src="j/JGS.Demo6Page.js"></script>
+
+<script>
+  $(document).ready(function () {
+    var pageCfg = {
+      $graphCont: $("#graph-cont-1"),
+      $rangeBtnsCont: $("#range-btns-cont-1")
+    };
+    var demo6Page = new JGS.Demo6Page(pageCfg);
+    demo6Page.init();
+  });
+</script>
+
+<script type="text/javascript">
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script>
+<script type="text/javascript">
+  try {
+    var pageTracker = _gat._getTracker("UA-8344371-7");
+    pageTracker._trackPageview();
+  } catch (err) {
+  }
+</script>
+
+</body>
+</html>
